@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Earth Imagery | NASA Demo Flask App{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Earth Imagery (EPIC)</h2>
+    <form class="row g-3 mb-4" method="get">
+        <div class="col-auto">
+            <input type="number" class="form-control" name="year" value="{{ year }}" min="2015" max="{{ current_year }}" placeholder="Year">
+        </div>
+        <div class="col-auto">
+            <input type="number" class="form-control" name="month" value="{{ month }}" min="1" max="12" placeholder="Month">
+        </div>
+        <div class="col-auto">
+            <input type="number" class="form-control" name="day" value="{{ day }}" min="1" max="31" placeholder="Day">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">Show Images</button>
+        </div>
+    </form>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% if images %}
+        <div class="row">
+            {% for img in images %}
+            <div class="col-md-4 mb-4">
+                <div class="card bg-dark text-light">
+                    <img src="{{ img }}" class="card-img-top" alt="Earth image">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">No images found for this date.</div>
+    {% endif %}
+</div>
+{% endblock %}

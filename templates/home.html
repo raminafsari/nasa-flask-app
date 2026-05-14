@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Home | NASA Demo Flask App{% endblock %}
+{% block content %}
+<div class="text-center">
+    <h1 class="display-4 mb-4">Welcome to the NASA Demo Flask App!</h1>
+    <p class="lead mb-5">Explore NASA data and imagery through a modern, clean interface.</p>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-transparent"><a href="/apod">Astronomy Picture of the Day</a></li>
+                <li class="list-group-item bg-transparent"><a href="/neo">Near Earth Objects (Today)</a></li>
+                <li class="list-group-item bg-transparent"><a href="/earth">Earth Imagery</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

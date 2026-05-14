@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}NEO | NASA Demo Flask App{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Near Earth Objects for {{ date }}</h2>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% if neos and neos|length > 0 %}
+        <div class="table-responsive">
+            <table class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Diameter (m)</th>
+                        <th>Hazardous</th>
+                        <th>Close Approach (km)</th>
+                        <th>Orbit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for neo in neos %}
+                    <tr>
+                        <td>{{ neo.name }}</td>
+                        <td>{{ neo.estimated_diameter.meters.estimated_diameter_max | round(2) if neo.estimated_diameter and neo.estimated_diameter.meters and neo.estimated_diameter.meters.estimated_diameter_max is defined else 'N/A' }}</td>
+                        <td>{% if neo.is_potentially_hazardous_asteroid %}Yes{% else %}No{% endif %}</td>
+                        <td>{% if neo.close_approach_data and neo.close_approach_data[0] and neo.close_approach_data[0].miss_distance and neo.close_approach_data[0].miss_distance.kilometers is defined %}{{ neo.close_approach_data[0].miss_distance.kilometers | float | round(0) }}{% else %}N/A{% endif %}</td>
+                        <td>{% if neo.nasa_jpl_url %}<a href="{{ neo.nasa_jpl_url }}&view=V" target="_blank" rel="noopener">Orbit</a>{% else %}N/A{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">No NEO data available for today.</div>
+    {% endif %}
+</div>
+{% endblock %}

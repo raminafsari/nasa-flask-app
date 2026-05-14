@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}APOD | NASA Demo Flask App{% endblock %}
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">Astronomy Picture of the Day</h2>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% if data %}
+        <div class="card bg-dark text-light mb-3">
+            {% if data.media_type == 'image' %}
+                <img src="{{ data.url }}" class="card-img-top" alt="APOD image">
+            {% elif data.media_type == 'video' %}
+                <div class="ratio ratio-16x9 mb-3">
+                    <iframe src="{{ data.url }}" frameborder="0" allowfullscreen></iframe>
+                </div>
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ data.title }}</h5>
+                <p class="card-text">{{ data.explanation }}</p>
+                <p class="card-text"><small class="text-muted">Date: {{ data.date }}</small></p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
