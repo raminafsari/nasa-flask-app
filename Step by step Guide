@@ -1,0 +1,109 @@
+#instruction for the nasa project 
+1.0 create a fork of the repository in your github 
+
+2.0 create an instance using amazon cloud services
+
+3.0 get inside your instance by ssh -i .ssh/(the key) ubuntu@(IP Address).
+
+4.0 update the system by
+sudo apt update -y
+sudo apt upgrade -y
+
+5.0 install python and required tools:
+sudo apt install python3 python3-pip python3-venv git nginx -y
+
+6.0 to check the verions you must type: 
+python3 --version
+pip3 --version
+git --version
+
+7.0 your VM has all the dependancies and now you can clone it to the github you have created
+git clone https://github.com/raminafsari/nasa-flask-app.git
+ 8.0 create a python virtual environment by
+sudo python3 -m venv venv
+
+9.0 to activate it 
+source venv/bin/activate
+the shell must now show (venv)
+
+10.0 install pythn dependencies
+pip install -r requirements.txt
+
+11.0 download gunicorn seperately as it is not in the requirements.txt but it is still needed
+pip install gunicorn
+
+12.0 now you must go to the provided link in nasas website and register a free api key
+13.0 then you se the api key environment variable
+
+export NASA_API_KEY=abc123xyz
+14.0 to verify
+echo $NASA_API_KEY
+
+15.0 run the flask app
+python app.py 
+16.0 the app was not working with Ip address:5000 due to the fact that the security froup in the instance did not have this port ready/
+make sure the security group is updated/
+
+17.0 now the app should work but when you control c it stope as you need gunicorn to run on the page.
+pip install gunicorn
+
+18.0to run the gunicorn on the background you need to 
+gunicorn --bind 0.0.0.0:5000 app:app
+
+19.0 configuring nginx reverse proxy
+sudo nano /etc/nginx/sites-available/nasa-app
+server {
+    listen 80;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:5000;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+save it and exit
+
+20.0 enable site 
+sudo ln -s /etc/nginx/sites-available/nasa-app /etc/nginx/sites-enabled
+
+21.0 test confiq
+sudo nginx -t
+
+22.0 restart nginx
+sudo systemctl restart nginx
+
+23.0Run Gunicorn in Background Using systemd (Recommended)
+Create a systemd Service
+sudo nano /etc/systemd/system/nasa-app.service
+inside write :
+[Unit]
+Description=NASA Flask App Gunicorn Service
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/nasa-flask-app
+Environment="NASA_API_KEY=5VxO96gpXO8X6p9LdheqLjFt9dmVdLGJa6YbS7Y3"
+ExecStart=/home/ubuntu/nasa-flask-app/venv/bin/gunicorn --workers 3 --bind 127.0.0.1:5000 app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+save and exit
+
+
+24.0 reload systemd
+sudo systemctl daemon-reload
+
+25.0enable systemt1 enable nasa-app
+sudo systemctl enable nasa-app
+ 
+26.0start the service
+sudo systemctl start nasa-app
+
+27.0 check the status of nasa-app
+sudo systemctl status nasa-app
